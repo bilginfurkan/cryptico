@@ -258,6 +258,18 @@ function RSADecrypt(ctext)
     return pkcs1unpad2(m, (this.n.bitLength() + 7) >> 3);
 }
 
+
+function RSAImport(json) {
+    this.n = Object.assign(new BigInteger, json.n);
+    this.e = json.e;
+    this.d = Object.assign(new BigInteger, json.d);
+    this.p = Object.assign(new BigInteger, json.p);
+    this.q = Object.assign(new BigInteger, json.q);
+    this.dmp1 = Object.assign(new BigInteger, json.dmp1);
+    this.dmq1 = Object.assign(new BigInteger, json.dmq1);
+    this.coeff = Object.assign(new BigInteger, json.coeff);
+}
+
 // protected
 RSAKey.prototype.doPrivate = RSADoPrivate;
 
@@ -266,6 +278,7 @@ RSAKey.prototype.setPrivate = RSASetPrivate;
 RSAKey.prototype.setPrivateEx = RSASetPrivateEx;
 RSAKey.prototype.generate = RSAGenerate;
 RSAKey.prototype.decrypt = RSADecrypt;
+RSAKey.prototype.importJson = RSAImport;
 
 
 //

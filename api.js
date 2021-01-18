@@ -287,8 +287,10 @@ var cryptico = (function() {
         if (typeof json === "string") {
             json = JSON.parse(json);
         }
-        
-        return new RSAKey().import(json);
+        var key = new RSAKey;
+        key.importJson(json);
+
+        return key;
     }
     
     // Returns an MD5 sum of a publicKeyString for easier identification.

@@ -2685,18 +2685,6 @@ function RSAEncrypt(text)
     else return "0" + h;
 }
 
-
-function RSAImport(json) {
-    this.n = Object.assign(this.n, json.n);
-    this.e = json.e;
-    this.d = Object.assign(this.d, json.d);
-    this.p = Object.assign(this.p, json.p);
-    this.q = Object.assign(this.q, json.q);
-    this.dmp1 = Object.assign(this.dmp1, json.dmp1);
-    this.dmq1 = Object.assign(this.dmq1, json.dmq1);
-    this.coeff = Object.assign(this.coeff, json.coeff);
-}
-
 // Return the PKCS#1 RSA encryption of "text" as a Base64-encoded string
 //function RSAEncryptB64(text) {
 //  var h = this.encrypt(text);
@@ -2708,7 +2696,6 @@ RSAKey.prototype.doPublic = RSADoPublic;
 // public
 RSAKey.prototype.setPublic = RSASetPublic;
 RSAKey.prototype.encrypt = RSAEncrypt;
-RSAKey.prototype.import = RSAImport;
 
 // Version 1.1: support utf-8 decoding in pkcs1unpad2
 // Undo PKCS#1 (type 2, random) padding and, if valid, return the plaintext
@@ -2835,6 +2822,18 @@ function RSADecrypt(ctext)
     return pkcs1unpad2(m, (this.n.bitLength() + 7) >> 3);
 }
 
+
+function RSAImport(json) {
+    this.n = Object.assign(new BigInteger, json.n);
+    this.e = json.e;
+    this.d = Object.assign(new BigInteger, json.d);
+    this.p = Object.assign(new BigInteger, json.p);
+    this.q = Object.assign(new BigInteger, json.q);
+    this.dmp1 = Object.assign(new BigInteger, json.dmp1);
+    this.dmq1 = Object.assign(new BigInteger, json.dmq1);
+    this.coeff = Object.assign(new BigInteger, json.coeff);
+}
+
 // protected
 RSAKey.prototype.doPrivate = RSADoPrivate;
 
@@ -2843,6 +2842,7 @@ RSAKey.prototype.setPrivate = RSASetPrivate;
 RSAKey.prototype.setPrivateEx = RSASetPrivateEx;
 RSAKey.prototype.generate = RSAGenerate;
 RSAKey.prototype.decrypt = RSADecrypt;
+RSAKey.prototype.importJson = RSAImport;
 
 
 //
@@ -3466,7 +3466,9 @@ var cryptico = (function() {
         pubkey = my.b16to64(rsakey.n.toString(16));
         return pubkey; 
     }
+
     
+ 
     // Export RSA key
     my.exportRSAKey = function(rsaKey) 
     {
@@ -3478,8 +3480,10 @@ var cryptico = (function() {
         if (typeof json === "string") {
             json = JSON.parse(json);
         }
-        
-        return Object.assign(new RSAKey, json);
+        var key = new RSAKey;
+        key.importJson(json);
+
+        return key;
     }
     
     // Returns an MD5 sum of a publicKeyString for easier identification.
