@@ -2685,6 +2685,18 @@ function RSAEncrypt(text)
     else return "0" + h;
 }
 
+
+function RSAImport(json) {
+    this.n = Object.assign(this.n, json.n);
+    this.e = json.e;
+    this.d = Object.assign(this.d, json.d);
+    this.p = Object.assign(this.p, json.p);
+    this.q = Object.assign(this.q, json.q);
+    this.dmp1 = Object.assign(this.dmp1, json.dmp1);
+    this.dmq1 = Object.assign(this.dmq1, json.dmq1);
+    this.coeff = Object.assign(this.coeff, json.coeff);
+}
+
 // Return the PKCS#1 RSA encryption of "text" as a Base64-encoded string
 //function RSAEncryptB64(text) {
 //  var h = this.encrypt(text);
@@ -2696,6 +2708,7 @@ RSAKey.prototype.doPublic = RSADoPublic;
 // public
 RSAKey.prototype.setPublic = RSASetPublic;
 RSAKey.prototype.encrypt = RSAEncrypt;
+RSAKey.prototype.import = RSAImport;
 
 // Version 1.1: support utf-8 decoding in pkcs1unpad2
 // Undo PKCS#1 (type 2, random) padding and, if valid, return the plaintext
@@ -3453,9 +3466,7 @@ var cryptico = (function() {
         pubkey = my.b16to64(rsakey.n.toString(16));
         return pubkey; 
     }
-
     
- 
     // Export RSA key
     my.exportRSAKey = function(rsaKey) 
     {
